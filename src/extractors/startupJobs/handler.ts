@@ -7,11 +7,11 @@ import router from './../../router.js'
 import { useSheets } from '../../components/useSheets.js'
 import { extractor } from './extractor.js'
 
-export const startupJobsHandler = async (searchParams: string[], sheetName: string) => {
+export const startupJobsHandler = async (sheetLabels: string[], sheetName: string) => {
     const { getSheet } = useSheets()
     const sheet = await getSheet(sheetName)
 
-    const { extractCatalogPagination, extractCatalogLinks, extractDetail } = await extractor(sheet, searchParams)
+    const { extractCatalogPagination, extractCatalogLinks, extractDetail } = await extractor(sheet, sheetLabels)
 
     router.addHandler('home', async ctx => {
         await extractCatalogPagination(ctx)
@@ -23,7 +23,7 @@ export const startupJobsHandler = async (searchParams: string[], sheetName: stri
     router.addHandler('detail', extractDetail)
 
     return {
-        searchParams,
+        sheetLabels,
         sheetName
     }
 }

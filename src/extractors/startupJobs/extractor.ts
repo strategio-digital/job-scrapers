@@ -6,7 +6,7 @@
 import { Dataset, PlaywrightCrawlingContext } from 'crawlee'
 import { GoogleSpreadsheetWorksheet } from 'google-spreadsheet'
 
-export const extractor = async (sheet: GoogleSpreadsheetWorksheet, searchParams: string[]) => {
+export const extractor = async (sheet: GoogleSpreadsheetWorksheet, sheetLabels: string[]) => {
     async function extractCatalogPagination(ctx: PlaywrightCrawlingContext) {
         const { request, page, log, enqueueLinks } = ctx
 
@@ -62,7 +62,7 @@ export const extractor = async (sheet: GoogleSpreadsheetWorksheet, searchParams:
             salary_min: salary ? salary[0]?.trim() : '-',
             salary_max: salary ? salary[1]?.trim() : '-',
             remote: params.find(param => param.value?.includes('Remote')) ? 'ano' : '-' || '-',
-            search_params: searchParams.join(', ') || '-',
+            labels: sheetLabels.join(', ') || '-',
             source: 'startup-jobs',
             created_at: (new Date()).toUTCString(),
             params,
