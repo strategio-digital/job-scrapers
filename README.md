@@ -1,4 +1,4 @@
-# Jobs crawlers
+# Jobs scrapers
 
 Get structured jobs data from various job websites.
 - https://www.startupjobs.cz
