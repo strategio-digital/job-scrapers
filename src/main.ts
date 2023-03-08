@@ -4,9 +4,11 @@
  */
 
 import { useSheets } from './components/useSheets.js'
-import { startupJobsCrawler } from './extractors/startupJobs/crawler.js'
+import { jobsCrawler } from './extractors/jobs/crawler.js'
 
 const sheets = useSheets()
 await sheets.auth()
 
-await startupJobsCrawler('test', ['php'], 'https://www.startupjobs.cz/nabidky/vyvoj/back-end/php')
+//await startupJobsCrawler('['php'], 'https://www.startupjobs.cz/nabidky/vyvoj/back-end/php')
+await jobsCrawler(['php'], 'https://beta.www.jobs.cz/prace/php-vyvojar/')
+await sheets.storeData('test')

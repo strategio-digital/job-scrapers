@@ -4,9 +4,8 @@
  */
 
 import { Dataset, PlaywrightCrawlingContext } from 'crawlee'
-import { GoogleSpreadsheetWorksheet } from 'google-spreadsheet'
 
-export const extractor = async (sheet: GoogleSpreadsheetWorksheet, sheetLabels: string[]) => {
+export const extractor = async (sheetLabels: string[]) => {
     async function extractCatalogPagination(ctx: PlaywrightCrawlingContext) {
         const { request, page, log, enqueueLinks } = ctx
 
@@ -30,12 +29,12 @@ export const extractor = async (sheet: GoogleSpreadsheetWorksheet, sheetLabels: 
 
         log.info(`Extracting details links from: ${request.loadedUrl}`)
 
-        const nodes = await page.$$eval('#offers-list article', el => el.map(article => {
+        const links = await page.$$eval('#offers-list article', el => el.map(article => {
             const source = article.querySelector('a')?.getAttribute('href') || null
             return source ? `https://www.startupjobs.cz${source}` : null
         }))
 
-        await enqueueLinks({ urls: nodes.filter(links => links !== null) as string[], label: 'detail' })
+        await enqueueLinks({ urls: links.filter(link => link !== null) as string[], label: 'detail' })
     }
 
     async function extractDetail(ctx: PlaywrightCrawlingContext) {
@@ -59,17 +58,16 @@ export const extractor = async (sheet: GoogleSpreadsheetWorksheet, sheetLabels: 
             company_name: companyName ? companyName?.trim() : '-',
             job_name: jobName ? jobName?.trim() : '-',
             job_type: params.find(param => param.name === 'Úvazek')?.value || '-',
+            remote: params.find(param => param.value?.includes('Remote')) ? 'ano' : '-' || '-',
             salary_min: salary ? salary[0]?.trim() : '-',
             salary_max: salary ? salary[1]?.trim() : '-',
-            remote: params.find(param => param.value?.includes('Remote')) ? 'ano' : '-' || '-',
             labels: sheetLabels.join(', ') || '-',
             source: 'startup-jobs',
             created_at: (new Date()).toUTCString(),
-            params,
-            source_url: request.loadedUrl as string
+            source_url: request.loadedUrl as string,
+            params
         }
 
-        await sheet.addRow({ ...data, params: JSON.stringify(data.params) })
         await Dataset.pushData(data)
     }
 

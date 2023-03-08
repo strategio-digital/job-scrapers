@@ -5,6 +5,7 @@
 
 import { GoogleSpreadsheet } from 'google-spreadsheet'
 import * as dotenv from 'dotenv'
+import fs from 'fs'
 
 dotenv.config()
 const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID as string)
@@ -25,8 +26,29 @@ export const useSheets = () => {
         return doc.sheetsByTitle[sheetName]
     }
 
+    async function storeData(sheetName: string) {
+        const data: any[] = []
+        const storagePath = './storage/datasets/default'
+
+        fs.readdirSync(storagePath).forEach(file => {
+            const context = fs.readFileSync(`${storagePath}/${file}`, { encoding: 'utf8' })
+            data.push(JSON.parse(context.toString()))
+        })
+
+        const formattedData = data.map(item => {
+            return {
+                ...item,
+                params: JSON.stringify(item.params)
+            }
+        })
+
+        const sheet = await getSheet(sheetName)
+        await sheet.addRows(formattedData)
+    }
+
     return {
         auth,
-        getSheet
+        getSheet,
+        storeData
     }
 }
