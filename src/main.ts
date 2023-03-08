@@ -5,10 +5,19 @@
 
 import { useSheets } from './components/useSheets.js'
 import { jobsCrawler } from './extractors/jobs/crawler.js'
+import { startupJobsCrawler } from './extractors/startupJobs/crawler.js'
+import { useDataset } from './components/useDataset.js'
 
+const dataset = useDataset()
 const sheets = useSheets()
 await sheets.auth()
 
-//await startupJobsCrawler('['php'], 'https://www.startupjobs.cz/nabidky/vyvoj/back-end/php')
-await jobsCrawler(['php'], 'https://beta.www.jobs.cz/prace/php-vyvojar/')
-await sheets.storeData('test')
+const tags = ['php', 'nette', 'symfony', 'laravel', 'vue', 'react', 'node']
+
+for (const tag of tags) {
+    await startupJobsCrawler([tag], `https://www.startupjobs.cz/nabidky?superinput=${tag}`)
+    await jobsCrawler([tag], `https://beta.www.jobs.cz/prace/?q[]=${tag}`)
+}
+
+// Store data in Google Sheets
+await dataset.store('sheet-name')
