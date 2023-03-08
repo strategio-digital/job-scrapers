@@ -7,11 +7,11 @@ Get structured jobs data from various job websites.
 ## Turn this
 
 ```typescript
-await startupJobsHandler(['php'], 'php')
-await startupJobsCrawler.run([{ 
-    url: 'https://www.startupjobs.cz/nabidky/vyvoj/back-end/php', 
-    label: 'home' 
-}])
+await startupJobsCrawler(
+    'sheet-name',
+    ['sheet-label-1', 'sheet-label-2'],
+    'https://www.startupjobs.cz/nabidky/vyvoj/back-end/php'
+)
 ```
 
 ## Into this
