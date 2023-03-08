@@ -4,15 +4,11 @@
  */
 
 import { createPlaywrightRouter, PlaywrightCrawler } from 'crawlee'
-import { useSheets } from '../../components/useSheets.js'
 import { extractor } from './extractor.js'
 
-export const startupJobsCrawler = async (sheetName: string, sheetLabels: string[], startUrl: string) => {
-    const { getSheet } = useSheets()
-    const sheet = await getSheet(sheetName)
+export const startupJobsCrawler = async (sheetLabels: string[], startUrl: string) => {
     const router = createPlaywrightRouter()
-
-    const { extractCatalogPagination, extractCatalogLinks, extractDetail } = await extractor(sheet, sheetLabels)
+    const { extractCatalogPagination, extractCatalogLinks, extractDetail } = await extractor(sheetLabels)
 
     router.addHandler('home', async ctx => {
         await extractCatalogPagination(ctx)

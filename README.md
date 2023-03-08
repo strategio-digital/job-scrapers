@@ -7,8 +7,8 @@ Get structured jobs data from various job websites.
 ## Turn this
 
 ```typescript
-//await startupJobsCrawler('['php'], 'https://www.startupjobs.cz/nabidky/vyvoj/back-end/php')
-await jobsCrawler(['label-name'], 'https://beta.www.jobs.cz/prace/php-vyvojar/')
+//await startupJobsCrawler(['php'], 'https://www.startupjobs.cz/nabidky/vyvoj/back-end/php')
+await jobsCrawler(['label-name'], 'https://beta.www.jobs.cz/prace/php-vyvojar')
 await sheets.storeData('sheet-name')
 ```
 

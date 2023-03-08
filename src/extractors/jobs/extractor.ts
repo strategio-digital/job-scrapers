@@ -77,28 +77,27 @@ export const extractor = async (sheetLabels: string[]) => {
         })
 
         const mergedParams = [...oldParams, ...params]
-
         const salary = mergedParams.find(param => param.name === 'Plat')?.value?.split('–') || null
 
-        if (!supportedUrl) await new Promise(resolve => setTimeout(resolve, 3000))
+        if (! supportedUrl) await new Promise(resolve => setTimeout(resolve, 3000))
 
         const title = await page.title()
         const splitter = supportedUrl ? '–' : '|'
-        const companyName = mergedParams.find(param => param.name === 'Společnost')?.value || title.split(splitter)[1]?.trim() || '-';
+        const companyName = mergedParams.find(param => param.name === 'Společnost')?.value || title.split(splitter)[1]?.trim() || '-'
 
         const data = {
             company_name: companyName,
             job_name: jobName?.trim() || '-',
             job_type: mergedParams.find(param => param.name === 'Typ pracovního poměru')?.value?.trim() || '-',
             remote: mergedParams.find(param => param.value?.includes('Práce převážně z domova')) ? 'ano' : '-' || '-',
-            salary_min: salary ? salary[0]?.trim() : '-',
-            salary_max: salary ? salary[1]?.trim() : '-',
+            salary_min: salary ? salary[0]?.replace(/\s/g, '').replace('\u200D', '').trim() : '-',
+            salary_max: salary ? salary[1]?.replace(/\s/g, '').replace('\u200D', '').trim() : '-',
             labels: sheetLabels.join(', ') || '-',
             source_url: request?.loadedUrl || '-',
             source: 'jobs-cz',
             created_at: (new Date()).toUTCString(),
             alert: supportedUrl ? '-' : 'Atypická URL',
-            params: mergedParams,
+            params: mergedParams
         }
 
         await Dataset.pushData(data)
